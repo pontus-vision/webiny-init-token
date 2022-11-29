@@ -1,0 +1,33 @@
+{
+  "name": "webiny-init-token",
+  "version": "1.0.0",
+  "description": "this project implements a convenience script to automatically create webiny API Tokens for ephemeral environments",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pontus-vision/webiny-init-token.git"
+  },
+  "keywords": [
+    "webiny",
+    "pontus-vision",
+    "ephemeral",
+    "api-token"
+  ],
+  "author": "pontus-vision",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pontus-vision/webiny-init-token/issues"
+  },
+  "homepage": "https://github.com/pontus-vision/webiny-init-token#readme",
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "graphql-request": "^5.0.0"
+  }
+}
