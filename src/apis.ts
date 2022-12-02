@@ -235,3 +235,71 @@ adminUsers {
 }
 }
 `;
+
+export const INSTALL_I18N = `
+mutation InstallI18N($data: I18NInstallInput!) {
+  i18n {
+    install(data: $data) {
+      data
+      error {
+        code
+        message
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}
+`;
+
+export const INSTALL_FILE_MANAGER = `
+mutation InstallFileManager($srcPrefix: String) {
+  fileManager {
+    install(srcPrefix: $srcPrefix) {
+      data
+      error {
+        code
+        message
+        data
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}`;
+
+export const INSTALL_PAGE_BUILDER = `
+mutation InstallPageBuilder($data: PbInstallInput!) {
+  pageBuilder {
+    install(data: $data) {
+      data
+      error {
+        code
+        message
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}
+`;
+
+export const INSTALL_FORM_BUILDER = `
+mutation InstallFormBuilder($domain: String) {
+  formBuilder {
+    install(domain: $domain) {
+      data
+      error {
+        code
+        message
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}
+`;
