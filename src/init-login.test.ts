@@ -12,6 +12,18 @@ import {
   InstallI18NData,
   InstallPageBuilderData,
 } from "./types";
+import { login } from "./cognito-login";
+
+(async () => {
+  const cognitoUserSession = await login(
+    process.env["AWS_COGNITO_USERNAME"] || "",
+    process.env["AWS_COGNITO_PASSWORD"] || "",
+    process.env["AWS_COGNITO_USER_POOL_ID"] || "",
+    process.env["AWS_COGNITO_CLIENT_ID"] || ""
+  );
+
+  console.log(`${JSON.stringify(cognitoUserSession.getAccessToken().payload)}`);
+})();
 
 const query = async ({ query = "", variables = {} } = {}) => {
   return request(process.env.API_URL + "/graphql", query, variables, {

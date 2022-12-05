@@ -28,6 +28,7 @@
     "typescript": "^4.9.3"
   },
   "dependencies": {
+    "amazon-cognito-identity-js": "^6.0.1",
     "graphql-request": "^5.0.0"
   }
 }

@@ -4,7 +4,7 @@
  * If needed, feel free to add more.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.INSTALL_ADMIN_USERS = exports.INSTALL_SECURITY = exports.LIST_TODOS = exports.DELETE_TODO = exports.UPDATE_BASES_LEGAIS = exports.PUBLISH_BASES_LEGAIS = exports.CREATE_API_KEY = exports.CREATE_USER = exports.GET_GROUP_LIST = exports.CREATE_BASES_LEGAIS = exports.GET_TODO = void 0;
+exports.INSTALL_FORM_BUILDER = exports.INSTALL_PAGE_BUILDER = exports.INSTALL_FILE_MANAGER = exports.INSTALL_I18N = exports.INSTALL_ADMIN_USERS = exports.INSTALL_SECURITY = exports.LIST_TODOS = exports.DELETE_TODO = exports.UPDATE_BASES_LEGAIS = exports.PUBLISH_BASES_LEGAIS = exports.CREATE_API_KEY = exports.CREATE_USER = exports.GET_GROUP_LIST = exports.CREATE_BASES_LEGAIS = exports.GET_TODO = void 0;
 exports.GET_TODO = `
   query GetTodo($id: ID!) {
     todos {
@@ -224,5 +224,69 @@ adminUsers {
  }
  __typename
 }
+}
+`;
+exports.INSTALL_I18N = `
+mutation InstallI18N($data: I18NInstallInput!) {
+  i18n {
+    install(data: $data) {
+      data
+      error {
+        code
+        message
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}
+`;
+exports.INSTALL_FILE_MANAGER = `
+mutation InstallFileManager($srcPrefix: String) {
+  fileManager {
+    install(srcPrefix: $srcPrefix) {
+      data
+      error {
+        code
+        message
+        data
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}`;
+exports.INSTALL_PAGE_BUILDER = `
+mutation InstallPageBuilder($data: PbInstallInput!) {
+  pageBuilder {
+    install(data: $data) {
+      data
+      error {
+        code
+        message
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}
+`;
+exports.INSTALL_FORM_BUILDER = `
+mutation InstallFormBuilder($domain: String) {
+  formBuilder {
+    install(domain: $domain) {
+      data
+      error {
+        code
+        message
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
 }
 `;
