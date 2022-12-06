@@ -1,6 +1,7 @@
 {
   "name": "webiny-init-token",
   "version": "1.0.0",
+  "type": "commonjs",
   "description": "this project implements a convenience script to automatically create webiny API Tokens for ephemeral environments",
   "main": "index.js",
   "scripts": {
