@@ -1,7 +1,6 @@
 // const AmazonCognitoIdentity = require("amazon-cognito-identity-js");
-import AmazonCognitoIdentity, {
-  CognitoUserSession,
-} from "amazon-cognito-identity-js";
+import * as AmazonCognitoIdentity from "amazon-cognito-identity-js";
+// import {CognitoUserSession} from "amazon-cognito-identity-js";
 global.fetch = require("node-fetch");
 
 export const login = async (
@@ -13,6 +12,7 @@ export const login = async (
   const userPool = new AmazonCognitoIdentity.CognitoUserPool({
     UserPoolId: userPoolId,
     ClientId: clientId,
+    
   });
 
   const userData = {
@@ -31,7 +31,7 @@ export const login = async (
     const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
     cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: (
-        session: CognitoUserSession,
+        session: AmazonCognitoIdentity.CognitoUserSession,
         userConfirmationNecessary?: boolean
       ) => {
         resolve(session);

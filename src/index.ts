@@ -19,14 +19,22 @@ import { login } from "./cognito-login";
   const password = process.env["AWS_COGNITO_PASSWORD"] || "";
   const userPoolId = process.env["AWS_COGNITO_USER_POOL_ID"] || "";
   const clientId = process.env["AWS_COGNITO_CLIENT_ID"] || "";
-  const cognitoUserSession = await login(
-    userName,
-    password,
-    userPoolId,
-    clientId
-  );
 
+  try {
+    const cognitoUserSession = await login(
+      userName,
+      password,
+      userPoolId,
+      clientId
+    );
   console.log(`${JSON.stringify(cognitoUserSession.getAccessToken().payload)}`);
+  
+    
+  } catch (error) {
+    console.log(`error: ${error}`);
+    
+  }
+
 })();
 
 const query = async ({ query = "", variables = {} } = {}) => {
