@@ -15,11 +15,15 @@ import {
 import { login } from "./cognito-login";
 
 (async () => {
+  const userName = process.env["AWS_COGNITO_USERNAME"] || "";
+  const password = process.env["AWS_COGNITO_PASSWORD"] || "";
+  const userPoolId = process.env["AWS_COGNITO_USER_POOL_ID"] || "";
+  const clientId = process.env["AWS_COGNITO_CLIENT_ID"] || "";
   const cognitoUserSession = await login(
-    process.env["AWS_COGNITO_USERNAME"] || "",
-    process.env["AWS_COGNITO_PASSWORD"] || "",
-    process.env["AWS_COGNITO_USER_POOL_ID"] || "",
-    process.env["AWS_COGNITO_CLIENT_ID"] || ""
+    userName,
+    password,
+    userPoolId,
+    clientId
   );
 
   console.log(`${JSON.stringify(cognitoUserSession.getAccessToken().payload)}`);
