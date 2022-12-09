@@ -16,3 +16,13 @@ export interface InstallPageBuilderData {
 export interface InstallFormBuilderData {
   domain: string;
 }
+
+export interface Data {
+  name: string;
+  description: string;
+  permissions: Permission[];
+}
+
+export interface Permission {
+  name: string;
+}
