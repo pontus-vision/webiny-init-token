@@ -15,6 +15,77 @@ import {
 import { login } from "./cognito-login";
 import { getUserPoolClientId } from './cognito-userpool';
 
+
+const query = async (authorizationHeader: string, { query = "", variables = {} } = {}) => {
+  return request(process.env.API_URL + "/graphql", query, variables, {
+    authorization: process.env.WEBINY_API_KEY || "",
+  });
+};
+
+const installSecurity = async (authorizationHeader: string): Promise<void> => {
+  const resp = await query(authorizationHeader,{
+    query: INSTALL_SECURITY,
+  });
+
+  console.log(resp);
+};
+
+const installAdminUsers = async (authorizationHeader: string,data: CreateUserData):Promise<void> => {
+  const resp = await query(authorizationHeader,{
+    query: INSTALL_ADMIN_USERS,
+    variables: {
+      data: {
+        data,
+      },
+    },
+  });
+
+  console.log(resp);
+};
+
+const installI18N = async (authorizationHeader: string, data: InstallI18NData) => {
+  const resp = await query(authorizationHeader,{
+    query: INSTALL_ADMIN_USERS,
+    variables: {
+      data: {
+        data,
+      },
+    },
+  });
+
+  console.log(resp);
+};
+
+const installFileManager = async (authorizationHeader: string) => {
+  const resp = await query(authorizationHeader,{
+    query: INSTALL_FILE_MANAGER,
+  });
+
+  console.log(resp);
+};
+
+const installPageBuilder = async (authorizationHeader: string,data: InstallPageBuilderData) => {
+  const resp = await query(authorizationHeader,{
+    query: INSTALL_PAGE_BUILDER,
+    variables: {
+      data: {
+        data,
+      },
+    },
+  });
+};
+
+const installFormBuilder = async (authorizationHeader: string,data: InstallFormBuilderData) => {
+  const resp = await query(authorizationHeader,{
+    query: INSTALL_FORM_BUILDER,
+    variables: {
+      data: {
+        data,
+      },
+    },
+  });
+};
+
 (async () => {
   const userName = process.env["AWS_COGNITO_USERNAME"] || "";
   const password = process.env["AWS_COGNITO_PASSWORD"] || "";
@@ -30,6 +101,9 @@ import { getUserPoolClientId } from './cognito-userpool';
       userPoolId.clientId || clientId
     );
     console.log(`${JSON.stringify(cognitoUserSession.getAccessToken().payload)}`);
+    const authorizationHeader = `Bearer ${cognitoUserSession?.getAccessToken().getJwtToken()}` 
+
+    await installSecurity(authorizationHeader);
 
 
   } catch (error) {
@@ -39,72 +113,3 @@ import { getUserPoolClientId } from './cognito-userpool';
 
 })();
 
-const query = async ({ query = "", variables = {} } = {}) => {
-  return request(process.env.API_URL + "/graphql", query, variables, {
-    authorization: process.env.WEBINY_API_KEY || "",
-  });
-};
-
-const installSecurity = async () => {
-  const resp = await query({
-    query: INSTALL_SECURITY,
-  });
-
-  console.log(resp);
-};
-
-const installAdminUsers = async (data: CreateUserData) => {
-  const resp = await query({
-    query: INSTALL_ADMIN_USERS,
-    variables: {
-      data: {
-        data,
-      },
-    },
-  });
-
-  console.log(resp);
-};
-
-const installI18N = async (data: InstallI18NData) => {
-  const resp = await query({
-    query: INSTALL_ADMIN_USERS,
-    variables: {
-      data: {
-        data,
-      },
-    },
-  });
-
-  console.log(resp);
-};
-
-const installFileManager = async () => {
-  const resp = await query({
-    query: INSTALL_FILE_MANAGER,
-  });
-
-  console.log(resp);
-};
-
-const installPageBuilder = async (data: InstallPageBuilderData) => {
-  const resp = await query({
-    query: INSTALL_PAGE_BUILDER,
-    variables: {
-      data: {
-        data,
-      },
-    },
-  });
-};
-
-const installFormBuilder = async (data: InstallFormBuilderData) => {
-  const resp = await query({
-    query: INSTALL_FORM_BUILDER,
-    variables: {
-      data: {
-        data,
-      },
-    },
-  });
-};
