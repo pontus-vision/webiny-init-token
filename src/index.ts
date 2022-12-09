@@ -13,26 +13,28 @@ import {
   InstallPageBuilderData,
 } from "./types";
 import { login } from "./cognito-login";
+import { getUserPoolClientId } from './cognito-userpool';
 
 (async () => {
   const userName = process.env["AWS_COGNITO_USERNAME"] || "";
   const password = process.env["AWS_COGNITO_PASSWORD"] || "";
-  const userPoolId = process.env["AWS_COGNITO_USER_POOL_ID"] || "";
+
+  const userPoolId = await getUserPoolClientId('pr55');// process.env["AWS_COGNITO_USER_POOL_ID"] || "";
   const clientId = process.env["AWS_COGNITO_CLIENT_ID"] || "";
 
   try {
     const cognitoUserSession = await login(
       userName,
       password,
-      userPoolId,
-      clientId
+      userPoolId.userPoolId || process.env["AWS_COGNITO_USER_POOL_ID"] || '',
+      userPoolId.clientId || clientId
     );
-  console.log(`${JSON.stringify(cognitoUserSession.getAccessToken().payload)}`);
-  
-    
+    console.log(`${JSON.stringify(cognitoUserSession.getAccessToken().payload)}`);
+
+
   } catch (error) {
     console.log(`error: ${error}`);
-    
+
   }
 
 })();
