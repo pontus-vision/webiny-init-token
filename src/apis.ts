@@ -43,7 +43,7 @@ export const CREATE_BASES_LEGAIS = /* GraphQL */ `
   }
 `;
 
-export const GET_GROUP_LIST = `
+export const LIST_GROUPS = `
 query listGroups {
 security {
 groups: listGroups {
