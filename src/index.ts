@@ -8,6 +8,7 @@ import {
 } from "./apis";
 import {
   CreateApiKeyData,
+  CreateApiKeyOutput,
   CreateUserData,
   InstallFormBuilderData,
   InstallI18NData,
@@ -15,6 +16,7 @@ import {
 } from "./types";
 import { login } from "./cognito-login";
 import { getUserPoolClientId } from "./cognito-userpool";
+import { getCurrentToken, setCurrentToken } from "./s3-token-store";
 
 const query = async (
   authorizationHeader: string | undefined,
@@ -101,7 +103,7 @@ const installFormBuilder = async (
 const createApiKey = async (
   authorizationHeader: string,
   data: CreateApiKeyData
-) => {
+): Promise<CreateApiKeyOutput> => {
   const resp = await query(authorizationHeader, {
     query: INSTALL_FORM_BUILDER,
     variables: {
@@ -114,53 +116,74 @@ const createApiKey = async (
 (async () => {
   const userName = process.env["AWS_COGNITO_USERNAME"] || "";
   const password = process.env["AWS_COGNITO_PASSWORD"] || "";
-
-  const userPoolId = await getUserPoolClientId("pr55"); // process.env["AWS_COGNITO_USER_POOL_ID"] || "";
-  const clientId = process.env["AWS_COGNITO_CLIENT_ID"] || "";
+  const webinyEnv = process.env["WEBINY_ENV"] || "";
 
   try {
-    await installSecurity();
-    await installAdminUsers({
-      email: userName,
-      password: password,
-      firstName: "admin",
-      lastName: "admin",
-    });
+    const userPoolId = await getUserPoolClientId(webinyEnv); // process.env["AWS_COGNITO_USER_POOL_ID"] || "";
+    const clientId = process.env["AWS_COGNITO_CLIENT_ID"] || "";
 
-    const cognitoUserSession = await login(
-      userName,
-      password,
-      userPoolId.userPoolId || process.env["AWS_COGNITO_USER_POOL_ID"] || "",
-      userPoolId.clientId || clientId
-    );
-    console.log(
-      `${JSON.stringify(cognitoUserSession.getAccessToken().payload)}`
-    );
 
-    const authorizationHeader = `Bearer ${cognitoUserSession
-      ?.getAccessToken()
-      .getJwtToken()}`;
-    await installI18N(authorizationHeader, {
-      code: "pt-BR",
-    });
+    let token = await getCurrentToken(webinyEnv)
+    if (!token) {
+      await installSecurity();
+      await installAdminUsers({
+        email: userName,
+        password: password,
+        firstName: "admin",
+        lastName: "admin",
+      });
 
-    await installFileManager(authorizationHeader);
+      const cognitoUserSession = await login(
+        userName,
+        password,
+        userPoolId.userPoolId || process.env["AWS_COGNITO_USER_POOL_ID"] || "",
+        userPoolId.clientId || clientId
+      );
+      console.log(
+        `${JSON.stringify(cognitoUserSession.getAccessToken().payload)}`
+      );
 
-    await createApiKey(authorizationHeader, {
-      name: "test123",
-      description: "test123",
-      permissions: [
-        {
-          name: "content.i18n",
-        },
-        {
-          name: "cms.*",
-        },
-        {
-          name: "adminUsers.*",
-        },
-      ],
-    });
+      const authorizationHeader = `Bearer ${cognitoUserSession
+        ?.getAccessToken()
+        .getJwtToken()}`;
+      await installI18N(authorizationHeader, {
+        code: "pt-BR",
+      });
+
+      await installFileManager(authorizationHeader);
+      await installFormBuilder(authorizationHeader, {
+        domain: 'test.com'
+      });
+
+
+
+      const tokenData = await createApiKey(authorizationHeader, {
+        name: "test123",
+        description: "test123",
+        permissions: [
+          {
+            name: "content.i18n",
+          },
+          {
+            name: "cms.*",
+          },
+          {
+            name: "adminUsers.*",
+          },
+        ],
+      });
+
+      token = tokenData.data.security.apiKey.data.token;
+      
+      setCurrentToken(webinyEnv,token)
+
+    }
+
+    console.log(token)
+
+
+
+
   } catch (error) {
     console.log(`error: ${error}`);
   }
