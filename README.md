@@ -65,47 +65,47 @@ data
 
 // 3rd step - create the API Token
 
-mutation CreateApiKey($data: SecurityApiKeyInput!) {
-security {
-apiKey: createApiKey(data: $data) {
-data {
-id
-name
-description
-token
-permissions
-createdOn
-**typename
-}
-error {
-code
-message
-data
-**typename
-}
-**typename
-}
-**typename
-}
-}
+    mutation CreateApiKey($data: SecurityApiKeyInput!) {
+    security {
+    apiKey: createApiKey(data: $data) {
+    data {
+    id
+    name
+    description
+    token
+    permissions
+    createdOn
+    **typename
+    }
+    error {
+    code
+    message
+    data
+    **typename
+    }
+    **typename
+    }
+    **typename
+    }
+    }
 
-{
-"data": {
-"name": "test123",
-"description": "test123",
-"permissions": [
-{
-"name": "content.i18n"
-},
-{
-"name": "cms.*"
-},
-{
-"name": "adminUsers.*"
-}
-]
-}
-}
+    {
+    "data": {
+    "name": "test123",
+    "description": "test123",
+    "permissions": [
+    {
+    "name": "content.i18n"
+    },
+    {
+    "name": "cms.*"
+    },
+    {
+    "name": "adminUsers.*"
+    }
+    ]
+    }
+    }
 
 // The token
 [{"data":{"security":{"apiKey":{"data":{"id":"ABCANSDANCALDNL","name":"test123","description":"test123","token":"ADSAFDAGSFGGDHGDJFJF","permissions":[{"name":"content.i18n"},{"name":"cms.*"},{"name":"adminUsers.*"}],"createdOn":"2022-11-25T19:21:09.004Z","**typename":"SecurityApiKey"},"error":null,"**typename":"SecurityApiKeyResponse"},"\_\_typename":"SecurityMutation"}}}]

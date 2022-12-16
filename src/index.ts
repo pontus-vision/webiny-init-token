@@ -1,8 +1,10 @@
 import { request } from "graphql-request";
 import {
+  CREATE_API_KEY,
   INSTALL_ADMIN_USERS,
   INSTALL_FILE_MANAGER,
   INSTALL_FORM_BUILDER,
+  INSTALL_I18N,
   INSTALL_PAGE_BUILDER,
   INSTALL_SECURITY,
 } from "./apis";
@@ -17,6 +19,7 @@ import {
 import { login } from "./cognito-login";
 import { getUserPoolClientId } from "./cognito-userpool";
 import { getCurrentToken, setCurrentToken } from "./s3-token-store";
+import { S3 } from "@aws-sdk/client-s3";
 
 const query = async (
   authorizationHeader: string | undefined,
@@ -39,9 +42,7 @@ const installAdminUsers = async (data: CreateUserData): Promise<void> => {
   const resp = await query(undefined, {
     query: INSTALL_ADMIN_USERS,
     variables: {
-      data: {
-        data,
-      },
+      data,
     },
   });
 
@@ -53,11 +54,9 @@ const installI18N = async (
   data: InstallI18NData
 ) => {
   const resp = await query(authorizationHeader, {
-    query: INSTALL_ADMIN_USERS,
+    query: INSTALL_I18N,
     variables: {
-      data: {
-        data,
-      },
+      data,
     },
   });
 
@@ -79,9 +78,7 @@ const installPageBuilder = async (
   const resp = await query(authorizationHeader, {
     query: INSTALL_PAGE_BUILDER,
     variables: {
-      data: {
-        data,
-      },
+      data,
     },
   });
 };
@@ -93,9 +90,7 @@ const installFormBuilder = async (
   const resp = await query(authorizationHeader, {
     query: INSTALL_FORM_BUILDER,
     variables: {
-      data: {
-        data,
-      },
+      data,
     },
   });
 };
@@ -105,7 +100,7 @@ const createApiKey = async (
   data: CreateApiKeyData
 ): Promise<CreateApiKeyOutput> => {
   const resp = await query(authorizationHeader, {
-    query: INSTALL_FORM_BUILDER,
+    query: CREATE_API_KEY,
     variables: {
       data,
     },
@@ -117,14 +112,13 @@ const createApiKey = async (
   const userName = process.env["AWS_COGNITO_USERNAME"] || "";
   const password = process.env["AWS_COGNITO_PASSWORD"] || "";
   const webinyEnv = process.env["WEBINY_ENV"] || "";
-
   try {
-    const userPoolId = await getUserPoolClientId(webinyEnv); // process.env["AWS_COGNITO_USER_POOL_ID"] || "";
-    const clientId = process.env["AWS_COGNITO_CLIENT_ID"] || "";
-
-
-    let token = await getCurrentToken(webinyEnv)
+    const bucketUrl: string = process.env?.WEBINY_PULUMI_BACKEND || "";
+    const s3: S3 = new S3({});
+    let token = await getCurrentToken(webinyEnv, bucketUrl, s3);
     if (!token) {
+      const userPoolId = await getUserPoolClientId(webinyEnv); // process.env["AWS_COGNITO_USER_POOL_ID"] || "";
+      const clientId = process.env["AWS_COGNITO_CLIENT_ID"] || "";
       await installSecurity();
       await installAdminUsers({
         email: userName,
@@ -152,10 +146,8 @@ const createApiKey = async (
 
       await installFileManager(authorizationHeader);
       await installFormBuilder(authorizationHeader, {
-        domain: 'test.com'
+        domain: "test.com",
       });
-
-
 
       const tokenData = await createApiKey(authorizationHeader, {
         name: "test123",
@@ -174,16 +166,11 @@ const createApiKey = async (
       });
 
       token = tokenData.data.security.apiKey.data.token;
-      
-      setCurrentToken(webinyEnv,token)
 
+      setCurrentToken(webinyEnv, token);
     }
 
-    console.log(token)
-
-
-
-
+    console.log(token);
   } catch (error) {
     console.log(`error: ${error}`);
   }
